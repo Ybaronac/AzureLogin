@@ -1,4 +1,4 @@
-package co.gov.icfes.autenticacionAD.AutenticacionAzureAD.controller;
+package co.gov.icfes.autenticacionAD.AutenticacionAzureAD.Controllers;
 
 import co.gov.icfes.autenticacionAD.AutenticacionAzureAD.AutenticacionAzureAdApplication;
 import org.springframework.boot.SpringApplication;
@@ -17,6 +17,8 @@ public class Ping {
     public String hello(){
         return "Ping OK";
     }
+
+
 
 
 }
