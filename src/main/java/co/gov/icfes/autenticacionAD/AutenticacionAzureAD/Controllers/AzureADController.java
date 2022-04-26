@@ -2,6 +2,13 @@ package co.gov.icfes.autenticacionAD.AutenticacionAzureAD.Controllers;
 
 import co.gov.icfes.autenticacionAD.AutenticacionAzureAD.AutenticacionAzureAdApplication;
 import co.gov.icfes.autenticacionAD.AutenticacionAzureAD.Models.AzureConfiguration;
+import com.azure.identity.ClientSecretCredential;
+import com.azure.identity.ClientSecretCredentialBuilder;
+import com.azure.identity.UsernamePasswordCredential;
+import com.azure.identity.UsernamePasswordCredentialBuilder;
+import com.microsoft.graph.authentication.TokenCredentialAuthProvider;
+import com.microsoft.graph.models.User;
+import com.microsoft.graph.requests.GraphServiceClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.http.HttpHeaders;
@@ -13,6 +20,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.sql.Array;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping(path = "")
@@ -33,19 +42,6 @@ private AzureConfiguration azureConfiguration;
 
         String resourceUrl
                 = "https://login.microsoftonline.com/"+ tenant +"/oauth2/v2.0/token";*/
-
-
-        Unirest.setTimeouts(0, 0);
-        HttpResponse<String> response = Unirest.get("https://login.microsoftonline.com/375abf56-f1c9-42af-8094-fb5b7f1020fb/oauth2/v2.0/token")
-                .header("Cookie", "fpc=ApiAVW3IsAtAhuvT9cLVqGKzfU6RAQAAADRL8dkOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd")
-                .multiPartContent()
-                .field("password", "Popayan2703")
-                .field("username", "jhonTest@faibertorresohotmail.onmicrosoft.com")
-                .field("client_id", "318c3c9b-9f36-4cbe-8ffa-93bd78428834")
-                .field("scope", "https://graph.microsoft.com/.default")
-                .field("client_secret", "45z7Q~9H2Ou4qWAESaUyOp0TBN5jYLGcdDsXB")
-                .field("grant_type", "password")
-                .asString();
 
         // Fetch JSON response as String wrapped in ResponseEntity
 /*        ResponseEntity<String> response
@@ -69,8 +65,49 @@ private AzureConfiguration azureConfiguration;
 //            Assert.assertEquals(200, result.getStatusCodeValue());
 //            Assert.assertEquals(true, result.getBody().contains("employeeList"));
 
+        //Prueba 4
+
+//        ArrayList scopes = new ArrayList<String>();
+//        scopes.add("User.Read");
+//
+//        final UsernamePasswordCredential usernamePasswordCredential = new UsernamePasswordCredentialBuilder()
+//                .clientId("34003f59-7c72-4d25-bf04-e84dd26eabd5")
+//                .username("prisma@icfes.gov.co")
+//                .password("Pruebas123*")
+//                .build();
+//
+//        final TokenCredentialAuthProvider tokenCredentialAuthProvider = new TokenCredentialAuthProvider(scopes, usernamePasswordCredential);
+//
+//        final GraphServiceClient graphClient =
+//                GraphServiceClient
+//                        .builder()
+//                        .authenticationProvider(tokenCredentialAuthProvider)
+//                        .buildClient();
+//
+//        final User me = graphClient.me().buildRequest().get();
 
 
+        ArrayList scopes = new ArrayList<String>();
+            scopes.add("https://graph.microsoft.com/.default");
+
+
+        final ClientSecretCredential clientSecretCredential = new ClientSecretCredentialBuilder()
+                .clientId("34003f59-7c72-4d25-bf04-e84dd26eabd5")
+                .clientSecret("Fz~7Q~ck2jJOmobcfe_upytiNymDtMt4Gk3o.")
+                .tenantId("27864e10-5be4-4d4f-adb5-bbab512029e8")
+                .build();
+
+        final TokenCredentialAuthProvider tokenCredAuthProvider =
+                new TokenCredentialAuthProvider(scopes, clientSecretCredential);
+
+        final GraphServiceClient graphClient = GraphServiceClient
+                .builder()
+                .authenticationProvider(tokenCredAuthProvider)
+                .buildClient();
+
+        final User user = graphClient.me()
+                .buildRequest()
+                .get();
 
         return azureConfiguration.getTenant();
     }
